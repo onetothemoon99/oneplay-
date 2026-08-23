@@ -1,0 +1,745 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------
+   ONEPLAY — design tokens
+
+   The four brand colours, straight off the identity sheet. Chrome is
+   ink on paper; Cartridge is the one accent and is spent sparingly —
+   the wordmark, links, the current page. Signal is its counterpart,
+   used for the mark and for anything that has to read as "live".
+   Game cover art still brings its own colour and is left alone.
+--------------------------------------------------------- */
+:root {
+  --color-ink:       #1B1D26;
+  --color-paper:     #F5F3EE;
+  --color-cartridge: #F2794A;
+  --color-signal:    #7E92F5;
+  --color-danger:    #DC2626;
+
+  --color-bg:       var(--color-paper);
+  --color-surface:  #EDEAE3;
+  --color-card:     #FBFAF7;
+  --color-accent:   var(--color-cartridge);
+  --color-text:     var(--color-ink);
+  --color-text-sub: rgba(27, 29, 38, 0.58);
+
+  /* Chakra Petch carries Thai and Latin in one family, which is why the
+     identity picked it — no second face, no mismatched line heights. */
+  --font: "Chakra Petch", "SF Pro Display", system-ui, helvetica, sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", menlo, monospace;
+
+  --space-unit: 8px;
+  --container: 1180px;
+  --section-py: 88px;
+
+  --glass-dark: rgba(27, 29, 38, 0.06);
+  --glass-light: rgba(245, 243, 238, 0.16);
+  --line: rgba(27, 29, 38, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+/* our display rules must never beat a hidden element */
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font);
+  font-weight: 340;
+  letter-spacing: -0.14px;
+  font-feature-settings: "kern" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--color-ink); color: var(--color-paper); }
+
+/* ---------- focus: dashed, always ---------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px dashed currentColor;
+  outline-offset: 3px;
+}
+
+/* ---------- type scale ---------- */
+.display {
+  font-size: clamp(44px, 7.4vw, 86px);
+  font-weight: 450;
+  line-height: 1.0;
+  letter-spacing: -0.032em;
+}
+.h1 {
+  font-size: clamp(32px, 4.4vw, 56px);
+  font-weight: 450;
+  line-height: 1.06;
+  letter-spacing: -0.026em;
+}
+.h2 {
+  font-size: clamp(24px, 2.6vw, 34px);
+  font-weight: 480;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+}
+.h3 { font-size: 20px; font-weight: 540; line-height: 1.3; letter-spacing: -0.016em; }
+.lead {
+  font-size: clamp(17px, 1.6vw, 20px);
+  font-weight: 330;
+  line-height: 1.45;
+  letter-spacing: -0.012em;
+  color: var(--color-text-sub);
+}
+.body-sub { color: var(--color-text-sub); font-weight: 330; line-height: 1.5; }
+
+.mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 420;
+  font-size: 12px;
+}
+.mono-lg { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; font-size: 14px; font-weight: 420; }
+
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: 24px; }
+@media (max-width: 560px) { .container { padding-inline: 18px; } }
+
+/* ---------- buttons: pill + circle only ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid transparent; border-radius: 50px; cursor: pointer;
+  font-family: var(--font); font-size: 15px; font-weight: 480; letter-spacing: -0.01em;
+  padding: 10px 20px 11px; text-decoration: none; white-space: nowrap;
+  transition: transform .16s cubic-bezier(.2,.8,.3,1), background-color .16s ease, color .16s ease, border-color .16s ease, opacity .16s ease;
+}
+.btn:active { transform: scale(.965); }
+
+.btn-black { background: var(--color-ink); color: var(--color-paper); }
+.btn-black:hover { background: #1c1c1c; }
+
+.btn-white { background: var(--color-paper); color: var(--color-ink); }
+.btn-white:hover { background: #ededed; }
+
+.btn-ghost { background: var(--glass-dark); color: var(--color-ink); }
+.btn-ghost:hover { background: rgba(27, 29, 38, .11); }
+
+.btn-glass { background: var(--glass-light); color: var(--color-paper); backdrop-filter: blur(10px); }
+.btn-glass:hover { background: rgba(245, 243, 238, .26); }
+
+.btn-danger { background: var(--color-danger); color: var(--color-paper); }
+.btn-danger:hover { background: #BE1E1E; }
+
+/* Cartridge orange: leaving is not destructive, so signing out wears the
+   brand accent rather than the danger red. */
+.btn-accent { background: var(--color-cartridge); color: var(--color-paper); }
+.btn-accent:hover { background: #DE6335; }
+
+.btn-outline { background: transparent; color: var(--color-ink); border-color: rgba(27, 29, 38, .18); }
+.btn-outline:hover { border-color: var(--color-ink); }
+
+.btn-lg { padding: 14px 28px 15px; font-size: 16px; }
+.btn-sm { padding: 7px 15px 8px; font-size: 13px; }
+
+.btn-icon {
+  width: 40px; height: 40px; padding: 0; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: 50px; padding: 5px 12px 6px;
+  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .07em;
+  background: var(--glass-dark); color: var(--color-ink);
+}
+.pill-line { background: transparent; border: 1px solid var(--line); }
+.pill-inverse { background: rgba(245, 243, 238, .18); color: var(--color-paper); backdrop-filter: blur(8px); }
+
+/* ---------- tabs ---------- */
+.tab {
+  border-radius: 50px; padding: 8px 16px 9px; font-size: 14px; font-weight: 450;
+  background: transparent; color: rgba(27, 29, 38, .55); border: 1px solid transparent;
+  cursor: pointer; transition: all .16s ease; white-space: nowrap;
+}
+.tab:hover { color: var(--color-ink); background: var(--glass-dark); }
+.tab[aria-selected="true"] { background: var(--color-ink); color: var(--color-paper); }
+
+/* ---------- nav ---------- */
+.nav-link {
+  font-size: 15px; font-weight: 400; color: rgba(27, 29, 38, .6); text-decoration: none;
+  padding: 6px 2px; transition: color .15s ease; position: relative;
+}
+.nav-link:hover { color: var(--color-ink); }
+.nav-link[aria-current="page"] { color: var(--color-ink); font-weight: 480; }
+.nav-link[aria-current="page"]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; background: var(--color-cartridge);
+}
+
+/* ---------- cover art: the only place color exists ---------- */
+.cover {
+  position: relative; overflow: hidden; border-radius: 8px;
+  background: linear-gradient(140deg, var(--c1) 0%, var(--c2) 52%, var(--c3) 100%);
+  isolation: isolate;
+}
+.cover::before {
+  content: ""; position: absolute; inset: -30%;
+  background:
+    radial-gradient(38% 44% at 22% 26%, rgba(245, 243, 238, .42), transparent 70%),
+    radial-gradient(30% 36% at 82% 74%, rgba(27, 29, 38, .30), transparent 70%);
+  z-index: 0;
+}
+.cover::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; opacity: .16;
+  background-image:
+    linear-gradient(to right, rgba(245, 243, 238, .5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 243, 238, .5) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(120% 90% at 50% 100%, #000, transparent 78%);
+}
+.cover > * { position: relative; z-index: 2; }
+
+.cover-glyph {
+  font-family: var(--font-mono); font-weight: 700; color: var(--color-paper); mix-blend-mode: soft-light;
+  letter-spacing: -0.06em; line-height: .8; opacity: .95;
+}
+
+/* ---------- game card ---------- */
+.game-card {
+  display: block; text-decoration: none; color: inherit;
+  transition: transform .22s cubic-bezier(.2,.8,.3,1);
+}
+.game-card .cover { transition: box-shadow .22s ease; }
+.game-card:hover { transform: translateY(-4px); }
+.game-card:hover .cover { box-shadow: 0 18px 40px -18px rgba(27, 29, 38, .45); }
+.game-card:hover .card-title { text-decoration: underline; text-underline-offset: 3px; }
+.game-card .play-fab { opacity: 0; transform: scale(.9); transition: all .2s cubic-bezier(.2,.8,.3,1); }
+.game-card:hover .play-fab { opacity: 1; transform: scale(1); }
+
+/* ---------- surfaces ---------- */
+.panel { background: var(--color-card); border: 1px solid var(--line); border-radius: 8px; }
+.panel-soft { background: var(--color-surface); border: 1px solid var(--line); border-radius: 8px; }
+.divider { height: 1px; background: var(--line); border: 0; }
+
+/* ---------- inputs ---------- */
+.field {
+  width: 100%; background: var(--color-card); border: 1px solid var(--line); border-radius: 50px;
+  padding: 11px 18px 12px; font-family: var(--font); font-size: 15px; font-weight: 340;
+  color: var(--color-ink); letter-spacing: -0.01em; transition: border-color .15s ease;
+}
+.field::placeholder { color: rgba(27, 29, 38, .38); }
+.field:hover { border-color: rgba(27, 29, 38, .25); }
+.field:focus { border-color: var(--color-ink); outline: 2px dashed var(--color-ink); outline-offset: 2px; }
+.field-box { border-radius: 6px; }
+
+.switch {
+  appearance: none; width: 46px; height: 26px; border-radius: 50px; background: rgba(27, 29, 38, .14);
+  position: relative; cursor: pointer; transition: background .18s ease; flex: none;
+}
+.switch::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+  border-radius: 50%; background: var(--color-paper); transition: transform .2s cubic-bezier(.2,.8,.3,1);
+  box-shadow: 0 1px 3px rgba(27, 29, 38, .3);
+}
+.switch:checked { background: var(--color-ink); }
+.switch:checked::after { transform: translateX(20px); }
+
+/* ---------- misc ---------- */
+.reveal { opacity: 0; transform: translateY(14px); }
+.reveal.in { opacity: 1; transform: none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.8,.3,1); }
+
+.scroll-x { overflow-x: auto; scrollbar-width: none; }
+.scroll-x::-webkit-scrollbar { display: none; }
+
+.marquee-track { display: flex; gap: 48px; animation: marquee 34s linear infinite; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------------------------------
+   PLAY PAGE — canvas stage, overlays, on-screen pad
+--------------------------------------------------------- */
+#stage { width: 100%; aspect-ratio: 16 / 9; display: block; background: #14161D; border-radius: 8px; touch-action: none; }
+#stage:focus-visible { outline: 2px dashed rgba(245, 243, 238, .8); outline-offset: 4px; }
+.overlay {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: 24px; text-align: center; border-radius: 8px;
+  background: radial-gradient(120% 90% at 50% 40%, rgba(27, 29, 38, .55), rgba(27, 29, 38, .86));
+  backdrop-filter: blur(3px);
+}
+.overlay.hidden { display: none; }
+.padbtn {
+  width: 58px; height: 58px; border-radius: 50%; border: 1px solid rgba(245, 243, 238, .22);
+  background: rgba(245, 243, 238, .10); color: var(--color-paper); display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 12px; user-select: none; -webkit-user-select: none; touch-action: none;
+}
+.padbtn:active { background: rgba(245, 243, 238, .28); }
+@media (hover: hover) and (pointer: fine) { #touchpad { display: none; } }
+/* Two ways to be fullscreen: the real API, and the CSS stand-in used where
+   there is no element fullscreen to call (iPhone Safari). `max-width` has to
+   be beaten with !important — the wrapper carries an inline one, which
+   otherwise pins the stage to 860px in the middle of the screen. */
+#stage-wrap:fullscreen,
+#stage-wrap.psx-faux-fullscreen {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-ink);
+  max-width: none !important; width: 100%; height: 100%;
+  aspect-ratio: auto; margin: 0;
+}
+#stage-wrap.psx-faux-fullscreen {
+  position: fixed; inset: 0; z-index: 70;
+  height: 100dvh;   /* the visual viewport, so browser chrome is discounted */
+}
+#stage-wrap:fullscreen #stage,
+#stage-wrap.psx-faux-fullscreen #stage { width: min(100vw, 177.78vh); height: auto; border-radius: 0; }
+
+.psx-fps {
+  position: absolute; top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left));
+  z-index: 3; font-size: 10px;
+}
+
+.psx-fs-bar {
+  position: absolute; top: max(10px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right));
+  display: flex; align-items: center; gap: 6px;
+  z-index: 3;
+}
+
+/* ---------------------------------------------------------
+   PLAY PAGE — PlayStation stage (pcsx_rearmed / WebAssembly)
+
+   Styled by class, not by id: RetroArch renames whatever canvas it
+   is handed to id="canvas", and its Emscripten glue writes inline
+   width/height in pixels — hence the !important, which keeps the
+   stage fluid and lets the CSS aspect ratio win.
+--------------------------------------------------------- */
+/* The wrapper is the picture frame: a fixed 4:3 (or 16:9) box that clips.
+   The canvas inside it carries --psx-zoom, so a player on any phone can size
+   the picture to their own screen — over 100% deliberately overflows and is
+   cropped, under 100% pulls it in. */
+.psx-wrap {
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #14161D; border-radius: 8px;
+}
+.psx-wrap.is-wide { aspect-ratio: 16 / 9; }
+
+.psx-stage {
+  display: block;
+  /* without this the flex parent shrinks the canvas back to its own width */
+  flex: 0 0 auto;
+  /* Zoom is a transform, not a width: RetroArch's Emscripten glue writes inline
+     width/height in px with !important, which no stylesheet can outrank. A
+     transform sidesteps that fight entirely, and leaves the render buffer at
+     its layout size so zooming costs nothing. */
+  transform: scale(var(--psx-zoom, 1));
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 4 / 3; background: #14161D; border-radius: 8px;
+  image-rendering: pixelated; touch-action: none;
+}
+.psx-stage.psx-wide { aspect-ratio: 16 / 9; }
+.psx-stage:focus-visible { outline: 2px dashed rgba(245, 243, 238, .8); outline-offset: 4px; }
+#stage-wrap:fullscreen .psx-stage,
+#stage-wrap.psx-faux-fullscreen .psx-stage {
+  width: min(100vw, 133.34vh) !important;
+  border-radius: 0;
+}
+#stage-wrap:fullscreen .psx-stage.psx-wide,
+#stage-wrap.psx-faux-fullscreen .psx-stage.psx-wide { width: min(100vw, 177.78vh) !important; }
+.btn:disabled { opacity: .42; pointer-events: none; }
+
+/* ---------------------------------------------------------
+   PLAY PAGE — on-screen pad (virtual-gamepad-lib)
+
+   The pad sits over the bottom of the stage rather than under it,
+   because #stage-wrap is what goes fullscreen — which is how anyone
+   actually plays on a phone.
+
+   The .gpad-* rules below come from the library's own
+   gamepad_assets/base.css (MIT): the artwork itself must not swallow
+   pointer events, only the invisible tap targets inside it, and the
+   highlight layers fade in as buttons are touched and pressed.
+--------------------------------------------------------- */
+.psx-pad {
+  /* Tune the pad here: it sits over the game, so it stays faint until a thumb
+     is on it, then comes up to be readable while it is being used. */
+  --pad-idle: .38;
+  --pad-active: .8;
+
+  /* Size: a share of the stage, floored and capped in pixels. A thumb is the
+     same size on every phone, so the pad must not shrink away on a small
+     screen or grow silly on a tablet — the percentage handles the middle,
+     the two bounds handle the ends. */
+  --pad-min: 92px;
+  --pad-share: 52%;
+  /* the vw term keeps two halves from crowding a narrow screen — without it
+     the width cap would letterbox the artwork inside a too-tall box */
+  --pad-max: min(240px, 58vw);
+
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 0 10px 10px;
+  opacity: var(--pad-idle);
+  transition: opacity .18s ease-out;
+  pointer-events: none;   /* only the tap targets inside take input */
+  touch-action: none;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Keyed off `.pressed` and `.moved`, not `.touched`: the library leaves a
+   stray `touched` on the artwork from the moment it loads, which would pin the
+   pad at full strength forever. :has() carries this where it is supported and
+   nothing breaks where it is not — the pad is perfectly usable at --pad-idle. */
+.psx-pad:active,
+.psx-pad:has(.gpad-highlight.pressed),
+.psx-pad:has(.gpad-direction-highlight.moved) { opacity: var(--pad-active); }
+.psx-pad-half {
+  height: clamp(var(--pad-min), var(--pad-share), var(--pad-max));
+  pointer-events: auto;
+}
+
+/* Fullscreen is landscape and the whole screen, so the pad gets its full
+   share and more headroom — and clears the notch. */
+#stage-wrap:fullscreen .psx-pad,
+#stage-wrap.psx-faux-fullscreen .psx-pad {
+  --pad-min: 120px;
+  --pad-share: 86%;
+  --pad-max: min(420px, 58vw);
+  padding: 0 max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-right));
+}
+
+.psx-pad svg { height: 100%; width: auto; max-width: 100%; display: block; filter: drop-shadow(0 1px 6px rgba(27, 29, 38, .8)); }
+
+/* The stock artwork captions one group "Forward"; it means nothing here. */
+.psx-pad text { display: none; }
+
+/* A mouse does not need it — the keyboard map is better on a desktop. */
+@media (hover: hover) and (pointer: fine) { .psx-pad { display: none; } }
+
+.gpad-container svg,
+svg.gpad-container { pointer-events: none; }
+.gpad-tap-target { visibility: hidden; cursor: pointer; pointer-events: all; }
+.gpad-highlight { opacity: 0; }
+.gpad-highlight.touched { opacity: .5; }
+.gpad-highlight.touched.pressed { opacity: 1; }
+.gpad-direction-highlight { opacity: 0; }
+.gpad-direction-highlight.moved,
+.gpad-direction-highlight.active { opacity: .8; }
+
+/* ---------------------------------------------------------
+   HEADER — one primary action, everything else quiet
+--------------------------------------------------------- */
+.site-header {
+  background: rgba(245, 243, 238, .96);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Separates "where to go" from "who you are". */
+.nav-divider { width: 1px; height: 20px; background: var(--line); }
+
+/* A segmented toggle, not two buttons: the header already has a primary. */
+.lang-switch {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 2px; border-radius: 50px; background: var(--glass-dark);
+}
+.lang-option {
+  appearance: none; border: 0; cursor: pointer;
+  padding: 4px 10px 5px; border-radius: 50px;
+  font-family: inherit; font-size: 12px; font-weight: 450; line-height: 1.4;
+  color: rgba(27, 29, 38, .55); background: transparent;
+  transition: color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.lang-option:hover { color: var(--color-ink); }
+.lang-option[aria-current="true"] {
+  color: var(--color-ink); background: var(--color-paper);
+  box-shadow: 0 1px 2px rgba(27, 29, 38, .12);
+}
+
+/* Sheet rows get a real touch target and the same active mark as the bar. */
+.sheet-link {
+  display: block; padding: 11px 2px;
+  color: rgba(27, 29, 38, .68); text-decoration: none;
+  font-size: 16px; font-weight: 420;
+}
+.sheet-link:hover { color: var(--color-ink); }
+.sheet-link[aria-current="page"] { color: var(--color-ink); font-weight: 500; }
+
+/* ---------------------------------------------------------
+   BRAND — where Cartridge is allowed to show up
+--------------------------------------------------------- */
+
+/* Prose links. Everything else that is a link is already a button or a card. */
+.lead a,
+.body-sub a,
+p a:not([class*="btn"]):not(.game-card) {
+  color: var(--color-cartridge);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lead a:hover,
+.body-sub a:hover,
+p a:not([class*="btn"]):not(.game-card):hover { color: var(--color-ink); }
+
+.lang-option[aria-current="true"] { color: var(--color-ink); background: var(--color-card); }
+
+/* Tailwind's colour utilities are used throughout the markup and mean
+   "the dark one" and "the light one" — which are now Ink and Paper. This
+   stylesheet is unlayered, so these win without !important. */
+.bg-black { background-color: var(--color-ink); }
+.bg-white { background-color: var(--color-card); }
+.text-white { color: var(--color-paper); }
+.text-black { color: var(--color-ink); }
+
+/* ---------------------------------------------------------
+   HOME — the room
+
+   A dark band the height of a viewport with the gallery rendered into
+   it. The copy sits on a scrim so it stays readable over whatever the
+   camera happens to be looking at.
+--------------------------------------------------------- */
+.room {
+  position: relative;
+  min-height: min(82vh, 720px);
+  background: #111219;
+  overflow: hidden;
+  isolation: isolate;
+}
+.room-canvas { position: absolute; inset: 0; z-index: 0; }
+
+/* Readability first: the room is behind the words, never over them. */
+.room-live::before {
+  content: "";
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(17,18,25,.94) 0%, rgba(17,18,25,.68) 42%, rgba(17,18,25,.25) 72%, transparent 100%);
+}
+@media (min-width: 900px) {
+  .room-live::before {
+    background: linear-gradient(96deg, rgba(17,18,25,.95) 0%, rgba(17,18,25,.82) 30%, rgba(17,18,25,.35) 52%, transparent 68%);
+  }
+}
+
+.room-inner {
+  position: relative; z-index: 2;
+  min-height: inherit;
+  display: flex; align-items: center;
+  pointer-events: none;              /* the room takes the pointer, not this */
+}
+/* The set is sized and centred like the game screen it introduces: the
+   same 1100px cap and the same mx-auto as /play. */
+/* width:100% because room-inner is a flex row — without it this shrinks to
+   fit the buttons instead of filling the container. */
+.room-copy { padding: 72px 0; width: 100%; max-width: 1100px; margin-inline: auto; }
+.room-copy > * { pointer-events: auto; }
+
+/* The wordmark animation stands in for the headline. No frame, no fill and
+   no rounding: the set sits straight on the room's own ground, and its
+   drop shadow is the only edge. It is decorative — the h1 next to it
+   carries the words — so the pointer passes through to the room behind. */
+.logo-anim {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: transparent;
+  pointer-events: none;
+  contain: paint;
+}
+
+
+.room-hint {
+  color: rgba(245,243,238,.62);
+  border-left: 2px solid var(--color-cartridge);
+  padding-left: 12px;
+  min-height: 1.4em;
+}
+
+/* The catalogue as text: out of the way until a keyboard needs it. */
+.room-index { position: absolute; z-index: 3; left: 0; bottom: 0; }
+.room-index-list {
+  position: absolute; width: 1px; height: 1px; margin: 0; padding: 0;
+  overflow: hidden; clip-path: inset(50%); list-style: none;
+}
+.room-index:focus-within .room-index-list {
+  position: static; width: auto; height: auto; clip-path: none;
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 24px; padding: 16px 20px;
+  background: rgba(17,18,25,.92);
+  border: 1px solid rgba(245,243,238,.18);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+.room-index-list a {
+  color: rgba(245,243,238,.78);
+  font-size: 14px; text-decoration: none;
+  padding: 6px 10px; border-radius: 50px;
+}
+.room-index-list a:focus-visible { color: var(--color-ink); background: var(--color-cartridge); outline-offset: 4px; }
+
+/* Below 900px the copy cannot share space with the wall — it sits above the
+   room instead, and the scrim comes off because nothing overlaps any more. */
+@media (max-width: 899px) {
+  .room { min-height: 0; display: flex; flex-direction: column; }
+  .room-live::before { display: none; }
+  .room-inner { min-height: 0; }
+  .room-copy { padding: 40px 0 28px; max-width: none; }
+  .room-canvas { position: relative; inset: auto; height: min(52vh, 420px); order: 2; }
+  .room-index { position: static; }
+}
+
+/* A rule with the word "or" sitting in the gap, between the Google button and
+   the password form. */
+.auth-divider {
+  display: flex; align-items: center; gap: 14px;
+  margin: 22px 0 0;
+  color: var(--color-text-sub);
+}
+.auth-divider::before,
+.auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+/* The provider button wants its mark and its label centred together. */
+.btn svg + * { margin-left: 0; }
+
+/* ---------------------------------------------------------
+   LIBRARY — the catalogue toolbar
+
+   Search, platform, genre and sort all live in one pinned band
+   under the header. It is full-bleed (a container sits inside it)
+   so the paper never shows through at the edges when the grid
+   scrolls behind, and it only casts a shadow once it is pinned.
+--------------------------------------------------------- */
+.lib-bar {
+  /* Pinned from here, not from Tailwind utilities: the class list is built in
+     a template literal, which the utility scanner does not read — a `z-30`
+     written there is never generated and the grid scrolls over the bar. */
+  position: sticky;
+  top: 68px;            /* the height of .site-header */
+  z-index: 30;
+  /* Opaque on purpose. `backdrop-filter` is not survivable here — the CSS
+     pipeline keeps only the -webkit- alias — so a translucent bar would let
+     the grid read straight through it. */
+  background: var(--color-bg);
+  border-block: 1px solid var(--line);
+  padding-block: 12px;
+  transition: box-shadow .2s ease;
+}
+.lib-bar.is-stuck { box-shadow: 0 14px 32px -26px rgba(27, 29, 38, .7); }
+
+/* The icon and the clear button sit inside the field, so the field has to
+   make room itself: this stylesheet is unlayered and `.field` would beat any
+   Tailwind `pl-*` utility put on the same element. */
+.field-search { padding-left: 42px; padding-right: 40px; }
+/* one clear button is enough — ours, which is styled and always visible */
+.field-search::-webkit-search-cancel-button { display: none; }
+
+.search-icon {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  pointer-events: none; color: rgba(27, 29, 38, .42);
+}
+.search-clear {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 26px; height: 26px; border: 0; border-radius: 50%; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: rgba(27, 29, 38, .45);
+  transition: background-color .15s ease, color .15s ease;
+}
+.search-clear:hover { background: var(--glass-dark); color: var(--color-ink); }
+
+/* A select still has to look like the rest of the pills, so the native
+   arrow comes off and one is drawn next to it. */
+.select-wrap { position: relative; display: inline-flex; align-items: center; }
+.select-wrap > svg {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  pointer-events: none; color: rgba(27, 29, 38, .5);
+}
+.select-field {
+  appearance: none; -webkit-appearance: none;
+  width: auto; cursor: pointer;
+  padding: 9px 34px 10px 16px; font-size: 14px;
+}
+
+/* Segmented control: for a short, fixed set of choices (the platforms),
+   where tabs are for the open-ended one (the genres). */
+.seg {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 3px; border-radius: 50px; background: var(--glass-dark);
+}
+.seg-option {
+  appearance: none; border: 0; cursor: pointer; white-space: nowrap;
+  padding: 6px 14px 7px; border-radius: 50px;
+  font-family: inherit; font-size: 13px; font-weight: 450; line-height: 1.4;
+  color: rgba(27, 29, 38, .58); background: transparent;
+  transition: color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.seg-option:hover { color: var(--color-ink); }
+.seg-option[aria-selected="true"] {
+  color: var(--color-ink); background: var(--color-card);
+  box-shadow: 0 1px 2px rgba(27, 29, 38, .14);
+}
+
+/* The genre strip fades where it runs off the edge, so it reads as more
+   to scroll rather than as a hard cut. The sides are set from JS, which
+   is the only place that knows whether it actually overflows. */
+.lib-scroll { -webkit-overflow-scrolling: touch; }
+.lib-scroll[data-fade="right"] { mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent); }
+.lib-scroll[data-fade="left"]  { mask-image: linear-gradient(to left,  #000 calc(100% - 40px), transparent); }
+.lib-scroll[data-fade="both"]  { mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
+
+.tab-count {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em;
+  opacity: .5; margin-left: 6px;
+}
+
+/* A genre with nothing in it under the current search still has to be
+   reachable — it just stops competing for attention. */
+.tab[data-empty="true"] { opacity: .42; }
+.tab[data-empty="true"]:hover { opacity: 1; }
+
+/* Removable summary of what is filtering the grid right now. */
+.chip {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 4px 4px 5px 12px; border-radius: 50px;
+  background: var(--color-card); border: 1px solid var(--line);
+  font-size: 13px; font-weight: 420; max-width: 260px;
+}
+.chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip-x {
+  flex: none; width: 20px; height: 20px; border: 0; border-radius: 50%; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: rgba(27, 29, 38, .45);
+  transition: background-color .15s ease, color .15s ease;
+}
+.chip-x:hover { background: var(--glass-dark); color: var(--color-ink); }
+
+.link-quiet {
+  border: 0; background: transparent; cursor: pointer; padding: 4px 2px;
+  font-family: var(--font); font-size: 13px; font-weight: 450; color: var(--color-text-sub);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.link-quiet:hover { color: var(--color-cartridge); }
+
+/* Hero read-out: how big the shelf is, before any of it is filtered. */
+.lib-stats {
+  display: flex; flex-wrap: wrap; align-items: stretch;
+  gap: 12px 28px;
+  /* spacing lives here, not on a Tailwind `mt-*`: this stylesheet is
+     unlayered, so `.lib-stats` would win over the utility anyway */
+  margin: 36px 0 0;
+}
+.lib-stat { padding-left: 14px; border-left: 2px solid var(--line); }
+.lib-stat:first-child { border-left-color: var(--color-cartridge); }
+.lib-stat dd { margin: 2px 0 0; font-size: 24px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; }
+
+.empty-mark {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--color-card); border: 1px solid var(--line); color: rgba(27, 29, 38, .45);
+}

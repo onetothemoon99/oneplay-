@@ -1,0 +1,37 @@
+{
+  "name": "ps-hub-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "predev": "node scripts/fetch-psx-core.mts && node scripts/copy-gamepad-assets.mts",
+    "prebuild": "node scripts/fetch-psx-core.mts && node scripts/copy-gamepad-assets.mts",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "psx:core": "node scripts/fetch-psx-core.mts --force",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.112.3",
+    "next": "16.3.1",
+    "nostalgist": "^0.21.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "three": "^0.185.1",
+    "virtual-gamepad-lib": "^0.3.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@types/three": "^0.185.4",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.1",
+    "jiti": "^2.7.0",
+    "tailwindcss": "^4",
+    "typescript": "^6.0.3"
+  }
+}
