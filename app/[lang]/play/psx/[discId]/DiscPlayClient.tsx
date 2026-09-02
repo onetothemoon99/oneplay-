@@ -23,9 +23,11 @@ import { useT } from '@/components/I18nProvider';
 export interface DiscPlayClientProps {
   /** Signed-in player's id, for the cloud memory-card backup. null = local only. */
   userId?: string | null;
+  /** VIP membership — 3 save-state slots instead of 1. */
+  isVip?: boolean;
 }
 
-export default function DiscPlayClient({ userId }: DiscPlayClientProps) {
+export default function DiscPlayClient({ userId, isVip = false }: DiscPlayClientProps) {
   const t = useT();
   const { discId } = useParams<{ discId: string }>();
 
@@ -108,7 +110,7 @@ export default function DiscPlayClient({ userId }: DiscPlayClientProps) {
         </div>
       </div>
 
-      <PsxStage key={disc.id} disc={disc} bios={bios} userId={userId} onSession={onSession} />
+      <PsxStage key={disc.id} disc={disc} bios={bios} userId={userId} isVip={isVip} onSession={onSession} />
 
       {/* ============ BELOW THE FOLD ============ */}
       <div className="container">

@@ -16,6 +16,8 @@ export interface UserDto {
   id: string;
   email: string | null;
   name: string;
+  /** VIP membership — more save-state slots. See supabase/migrations/0004_profiles.sql. */
+  isVip: boolean;
 }
 
 /** The raw Supabase user, or null when nobody is signed in. */
@@ -30,12 +32,21 @@ export const getUser = cache(async (): Promise<User | null> => {
  * A trimmed-down user for Client Components — never hand the whole Supabase
  * user object (which carries app/user metadata and identities) to the browser.
  */
-export async function getUserDto(): Promise<UserDto | null> {
+export const getUserDto = cache(async (): Promise<UserDto | null> => {
   const user = await getUser();
   if (!user) return null;
+
+  const supabase = createClient(await cookies());
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('is_vip')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
   return {
     id: user.id,
     email: user.email ?? null,
-    name: user.user_metadata?.name || user.email?.split('@')[0] || 'Player One'
+    name: user.user_metadata?.name || user.email?.split('@')[0] || 'Player One',
+    isVip: profile?.is_vip ?? false
   };
-}
+});

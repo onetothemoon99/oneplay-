@@ -6,6 +6,7 @@ import { GAMES, getGame, type Game, type TrophyTier } from '@/lib/games';
 import { Store, fmt } from '@/lib/store';
 import GameCard from '@/components/GameCard';
 import CoverArt from '@/components/CoverArt';
+import VipTopupPanel from '@/components/VipTopupPanel';
 import { useT } from '@/components/I18nProvider';
 
 function tierColor(t: TrophyTier) { return t === 'Gold' ? '#FACC15' : t === 'Silver' ? '#D4D4D8' : '#D9A066'; }
@@ -32,7 +33,12 @@ interface ProfileData {
   unlockedMap: Record<string, Set<string>>;
 }
 
-export default function ProfileClient() {
+export interface ProfileClientProps {
+  isVip?: boolean;
+  userId?: string | null;
+}
+
+export default function ProfileClient({ isVip = false, userId = null }: ProfileClientProps) {
   const t = useT();
   const [data, setData] = useState<ProfileData>({
     name: '',
@@ -103,8 +109,12 @@ export default function ProfileClient() {
             />
             <div className="flex-1">
               <p className="mono" style={{ color: 'rgba(255,255,255,.6)' }}>{t('profile.playerProfile')}</p>
-              <h1 className="h1 text-white mt-2">{data.name || t('profile.defaultName')}</h1>
+              <div className="flex items-center gap-3 mt-2">
+                <h1 className="h1 text-white">{data.name || t('profile.defaultName')}</h1>
+                {isVip ? <span className="pill pill-inverse" style={{ borderColor: 'rgba(250,204,21,.5)' }}>{t('profile.vipBadge')}</span> : null}
+              </div>
               <p className="lead mt-2" style={{ color: 'rgba(255,255,255,.78)' }}>{data.sub}</p>
+              {isVip ? <p className="mono mt-1" style={{ color: 'rgba(250,204,21,.85)', fontSize: 11 }}>{t('profile.vipHint')}</p> : null}
             </div>
             <Link className="btn btn-white shrink-0" href="/settings">{t('profile.editProfile')}</Link>
           </div>
@@ -127,6 +137,8 @@ export default function ProfileClient() {
           </div>
         </div>
       </section>
+
+      {!isVip ? <VipTopupPanel userId={userId} /> : null}
 
       {/* recent */}
       {data.recent.length > 0 && (

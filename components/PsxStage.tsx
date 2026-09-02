@@ -120,11 +120,15 @@ export interface PsxStageProps {
   bios?: BiosRecord[];
   /** Signed-in player's id, for the cloud memory-card backup. null/undefined = local only. */
   userId?: string | null;
+  /** VIP membership — 3 save-state slots instead of 1. */
+  isVip?: boolean;
   /** Called on teardown with however many seconds were played. */
   onSession?: (seconds: number) => void;
 }
 
-export default function PsxStage({ disc, bios = [], userId, onSession }: PsxStageProps) {
+export default function PsxStage({ disc, bios = [], userId, isVip = false, onSession }: PsxStageProps) {
+  /** VIP: all of db.STATE_SLOTS. Everyone else: just the first (slot 1). */
+  const availableSlots = isVip ? db.STATE_SLOTS : db.STATE_SLOTS.slice(0, 1);
   const t = useT();
   const locale = useLocale();
   const dateFmt = useMemo(
@@ -444,13 +448,13 @@ export default function PsxStage({ disc, bios = [], userId, onSession }: PsxStag
 
       if (event.ctrlKey || event.altKey || event.metaKey) return;
       const slot = SLOT_CODES[event.code];
-      if (!slot) return;
+      if (!slot || !availableSlots.includes(slot)) return;
       event.preventDefault();
       if (event.shiftKey) loadState(slot); else saveState(slot);
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [loadState, pause, resume, running, saveState, status]);
+  }, [availableSlots, loadState, pause, resume, running, saveState, status]);
 
   /* a hidden tab should not keep burning CPU on emulation */
   useEffect(() => {
@@ -654,7 +658,10 @@ export default function PsxStage({ disc, bios = [], userId, onSession }: PsxStag
         {/* hud */}
         <div className="mx-auto mt-5 flex flex-wrap items-center gap-2 px-1" style={{ maxWidth: 1100 }}>
           <span className="mono mr-1" style={{ color: 'rgba(255,255,255,.42)', fontSize: 10 }}>{t('stage.saveStates')}</span>
-          {db.STATE_SLOTS.map((slot) => {
+          {!isVip ? (
+            <span className="mono mr-2" style={{ color: 'rgba(255,255,255,.3)', fontSize: 10 }}>{t('stage.vipHint')}</span>
+          ) : null}
+          {availableSlots.map((slot) => {
             const record = states.find((state) => state.slot === slot);
             return (
               <span key={slot} className="flex flex-col items-start gap-1 mr-3">

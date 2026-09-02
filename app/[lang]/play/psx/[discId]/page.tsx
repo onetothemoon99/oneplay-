@@ -10,5 +10,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   const user = await getUserDto();
-  return <main><DiscPlayClient userId={user?.id ?? null} /></main>;
+  return <main><DiscPlayClient userId={user?.id ?? null} isVip={user?.isVip ?? false} /></main>;
 }

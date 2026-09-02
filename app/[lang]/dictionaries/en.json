@@ -322,6 +322,8 @@
     "trophies": "Trophies",
     "trophyProgress": "Trophy progress",
     "unlocked": "Unlocked",
+    "vipBadge": "VIP",
+    "vipHint": "3 PS1 save-state slots unlocked",
     "yourLibrary": "Your library"
   },
   "psx": {
@@ -491,6 +493,32 @@
     "smaller": "Smaller picture",
     "spinningUp": "Spinning up the core",
     "tryAgain": "Try again",
-    "unmute": "Unmute"
+    "unmute": "Unmute",
+    "vipHint": "VIP members get 3 save slots"
+  },
+  "vip": {
+    "accountNameLabel": "Account name",
+    "accountNumberLabel": "Account number",
+    "amountLabel": "Amount transferred (THB)",
+    "bankLabel": "Bank",
+    "lead": "Transfer ฿{price} using the details below, then submit the reference so we can verify it. VIP unlocks once it's approved.",
+    "noteLabel": "Note (optional)",
+    "pendingBody": "We're reviewing your transfer — this can take a little while.",
+    "pendingTitle": "Top-up submitted",
+    "referenceLabel": "Reference",
+    "referencePlaceholder": "Last 4 digits of your account, or a transaction id",
+    "rejectedBody": "That request wasn't approved. Double-check the details and submit again.",
+    "signInBody": "VIP membership is tied to your account.",
+    "signInCta": "Sign in",
+    "slipHint": "A photo or screenshot of your transfer slip (JPG/PNG/WebP, up to 5MB)",
+    "slipLabel": "Transfer slip",
+    "slipRequired": "Please attach your transfer slip",
+    "slipTooLarge": "That file is too big — 5MB max",
+    "submit": "Submit for review",
+    "submitError": "Could not submit — try again",
+    "submittedAt": "Submitted {date}",
+    "submitting": "Submitting…",
+    "title": "Become VIP",
+    "viewSlip": "View attached slip"
   }
 }
