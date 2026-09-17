@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';
 import NotFoundClient from './[lang]/NotFoundClient';
 import { I18nProvider } from '@/components/I18nProvider';
@@ -31,6 +31,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const dict = await dictionaries[await readLocale()]();
   return { title: dict.notFound.metaTitle, description: dict.notFound.metaDescription };
 }
+
+export const viewport: Viewport = {
+  themeColor: '#1B1D26',
+  colorScheme: 'light'
+};
 
 export default async function GlobalNotFound() {
   const locale = await readLocale();

@@ -1,5 +1,5 @@
 import '../globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { I18nProvider } from '@/components/I18nProvider';
@@ -12,8 +12,21 @@ export function generateStaticParams() {
 
 export async function generateMetadata(): Promise<Metadata> {
   const dict = await getDictionary();
-  return { title: dict.meta.title, description: dict.meta.description };
+  return {
+    title: dict.meta.title,
+    description: dict.meta.description,
+    appleWebApp: {
+      capable: true,
+      title: 'OnePlay',
+      statusBarStyle: 'black-translucent'
+    }
+  };
 }
+
+export const viewport: Viewport = {
+  themeColor: '#1B1D26',
+  colorScheme: 'light'
+};
 
 export default async function RootLayout({ children, params }: LayoutProps<'/[lang]'>) {
   const { lang } = await params;
