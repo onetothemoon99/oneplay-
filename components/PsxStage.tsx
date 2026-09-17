@@ -21,6 +21,7 @@ import PsxTouchPad from '@/components/PsxTouchPad';
 import * as db from '@/lib/psxDb';
 import type { BiosRecord, DiscRecord, StateRecord } from '@/lib/psxDb';
 import * as cloud from '@/lib/psxCloudSync';
+import * as playtime from '@/lib/psxPlaytime';
 import { useLocale, useT, type Translate } from '@/components/I18nProvider';
 import { Store } from '@/lib/store';
 
@@ -511,7 +512,10 @@ export default function PsxStage({ disc, bios = [], userId, isVip = false, onSes
       .catch(() => null)
       .finally(() => {
         try { emulator.exit({ removeCanvas: false }); } catch { /* already gone */ }
-        if (played > 5) db.recordSession(disc.id, played).catch(() => {});
+        if (played > 5) {
+          db.recordSession(disc.id, played).catch(() => {});
+          if (userId) playtime.recordPlaytime(disc.title, played).catch(() => {});
+        }
         onSession?.(played);
       });
   }, [disc.id, disc.title, markStopped, onSession, userId]);

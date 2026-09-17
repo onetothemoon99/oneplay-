@@ -19,15 +19,16 @@
                       other file. Only shown when the Google keys are set.
 --------------------------------------------------------- */
 
-import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type DragEvent } from 'react';
 import Link from '@/components/LocaleLink';
-import { useT } from '@/components/I18nProvider';
+import { useLocale, useT } from '@/components/I18nProvider';
 import * as db from '@/lib/psxDb';
 import type { BiosRecord, DiscOrigin, DiscRecord } from '@/lib/psxDb';
 import { DISC_EXTENSIONS, extOf, formatBytes, isDiscFile, pickPrimaryFile, slugify, titleFromFileName } from '@/lib/psx';
 import { pickFolder, readPermission, scanFolder, supportsFolderLink } from '@/lib/psxFs';
 import { downloadDriveFile, getDriveToken, isDriveConfigured, pickDriveFiles } from '@/lib/psxDrive';
 import { registerPsxServiceWorker } from '@/lib/psxOffline';
+import { listPlaytime, type PlaytimeRecord } from '@/lib/psxPlaytime';
 import { fmt } from '@/lib/store';
 
 const ACCEPT = [...DISC_EXTENSIONS, '.sub', '.ccd', '.wav', '.mp3', '.ogg', '.flac'].join(',');
@@ -47,8 +48,15 @@ interface DownloadState {
   total: number;
 }
 
-export default function PsxLibraryClient() {
+export interface PsxLibraryClientProps {
+  /** Signed-in player's id — lets the shelf show playtime kept across devices. null = local only. */
+  userId?: string | null;
+}
+
+export default function PsxLibraryClient({ userId }: PsxLibraryClientProps = {}) {
   const t = useT();
+  const locale = useLocale();
+  const dateFmt = useMemo(() => new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short' }), [locale]);
   const [discs, setDiscs] = useState<DiscRecord[]>([]);
   const [bios, setBios] = useState<BiosRecord[]>([]);
   const [storage, setStorage] = useState<StorageEstimate | null>(null);
@@ -59,6 +67,14 @@ export default function PsxLibraryClient() {
   const [canLink, setCanLink] = useState(false);
   const [access, setAccess] = useState<Record<string, PermissionState>>({});
   const [progress, setProgress] = useState<DownloadState | null>(null);
+  const [cloudPlaytime, setCloudPlaytime] = useState<PlaytimeRecord[]>([]);
+
+  // Cross-device totals kept in Supabase — see supabase/migrations/0007_psx_playtime.sql.
+  // Local-only players see none of this, same as the cloud save backup.
+  useEffect(() => {
+    if (!userId) { setCloudPlaytime([]); return; }
+    listPlaytime().then(setCloudPlaytime).catch(() => {});
+  }, [userId]);
 
   // Public build-time config, identical on server and client — no effect needed.
   const canUseDrive = isDriveConfigured();
@@ -441,6 +457,30 @@ export default function PsxLibraryClient() {
 
             {/* ============ SIDEBAR ============ */}
             <aside className="space-y-6">
+              {userId ? (
+                <div className="panel-soft p-6">
+                  <p className="mono" style={{ color: 'var(--color-text-sub)' }}>{t('psx.cloudPlaytime')}</p>
+                  <h3 className="mt-2" style={{ fontWeight: 500, fontSize: 18, letterSpacing: '-0.02em' }}>{t('psx.cloudPlaytimeTitle')}</h3>
+                  {cloudPlaytime.length === 0 ? (
+                    <p className="mt-3" style={{ fontSize: 14, color: 'var(--color-text-sub)' }}>{t('psx.cloudPlaytimeEmpty')}</p>
+                  ) : (
+                    <div className="mt-4 space-y-3">
+                      {cloudPlaytime.map((game) => (
+                        <div key={game.gameKey} className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate" style={{ fontWeight: 450, fontSize: 14 }}>{game.title}</p>
+                            <p className="mono mt-0.5" style={{ color: 'var(--color-text-sub)', fontSize: 10 }}>
+                              {t('psx.sessions', { count: game.plays })} · {game.lastPlayedAt ? dateFmt.format(game.lastPlayedAt) : ''}
+                            </p>
+                          </div>
+                          <span className="mono shrink-0" style={{ fontSize: 12, fontWeight: 450 }}>{fmt.time(game.seconds)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
               <div className="panel-soft p-6">
                 <p className="mono" style={{ color: 'var(--color-text-sub)' }}>{t('psx.stepTwo')}</p>
                 <h3 className="mt-2" style={{ fontWeight: 500, fontSize: 18, letterSpacing: '-0.02em' }}>BIOS</h3>
