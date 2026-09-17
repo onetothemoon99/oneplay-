@@ -27,6 +27,7 @@ import type { BiosRecord, DiscOrigin, DiscRecord } from '@/lib/psxDb';
 import { DISC_EXTENSIONS, extOf, formatBytes, isDiscFile, pickPrimaryFile, slugify, titleFromFileName } from '@/lib/psx';
 import { pickFolder, readPermission, scanFolder, supportsFolderLink } from '@/lib/psxFs';
 import { downloadDriveFile, getDriveToken, isDriveConfigured, pickDriveFiles } from '@/lib/psxDrive';
+import { registerPsxServiceWorker } from '@/lib/psxOffline';
 import { fmt } from '@/lib/store';
 
 const ACCEPT = [...DISC_EXTENSIONS, '.sub', '.ccd', '.wav', '.mp3', '.ogg', '.flac'].join(',');
@@ -68,6 +69,10 @@ export default function PsxLibraryClient() {
   // Feature detection runs after mount: the server has no `window`, and
   // rendering a button that only exists on the client would not match.
   useEffect(() => { setCanLink(supportsFolderLink()); }, []);
+
+  // The core and this shelf only need to work offline after a player has
+  // opened them once while online, so register lazily here rather than site-wide.
+  useEffect(() => { registerPsxServiceWorker(); }, []);
 
   const refresh = useCallback(async () => {
     try {

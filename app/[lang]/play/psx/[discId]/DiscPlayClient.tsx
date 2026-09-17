@@ -17,6 +17,7 @@ import PsxControllerPorts from '@/components/PsxControllerPorts';
 import { BUTTON_GUIDE, formatBytes } from '@/lib/psx';
 import * as db from '@/lib/psxDb';
 import type { BiosRecord, DiscRecord } from '@/lib/psxDb';
+import { registerPsxServiceWorker } from '@/lib/psxOffline';
 import { fmt } from '@/lib/store';
 import { useT } from '@/components/I18nProvider';
 
@@ -59,6 +60,10 @@ export default function DiscPlayClient({ userId, isVip = false }: DiscPlayClient
 
     return () => { cancelled = true; };
   }, [discId, t]);
+
+  // Precaches the core and this page so the disc can boot with no connection
+  // next time — the discs/BIOS themselves are already local (IndexedDB).
+  useEffect(() => { registerPsxServiceWorker(); }, []);
 
   /* keep the sidebar counters honest once a session ends */
   const onSession = useCallback((seconds: number) => {

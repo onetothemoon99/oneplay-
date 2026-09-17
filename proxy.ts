@@ -17,7 +17,7 @@ const LOCALE_COOKIE = 'pshub.locale';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /** Paths that are not pages and must never be given a language prefix. */
-const PASSTHROUGH = /^\/(?:auth|api|cores|gamepad)(?:\/|$)/;
+const PASSTHROUGH = /^\/(?:auth|api|cores|gamepad)(?:\/|$)|^\/sw\.js$/;
 
 /**
  * The best supported language out of an Accept-Language header, honouring
